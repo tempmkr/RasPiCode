@@ -36,19 +36,20 @@ class Sense:
 
         count = 0
         output = [0, 1, 2]
+        m_l = []
+        m_m = []
+        m_r = []
 
         #instructions to make 6 measurements per sensor
 
-        while count <= 6 and l == True and m == True and r == True :
-            if l and m  and r:
-                m_l = []
-                output[0] = m_l.append(self.d_measurement(self.trig_l,self.echo_l))
+        while count <= 6:
+            if l and m and r:
 
-                m_m = []
-                output[1] = m_m.append(self.d_measurement(self.trig_m, self,echo_m,))
+                m_l.append(self.d_measurement(self.trig_l, self.echo_l))
 
-                m_r = []
-                output[2] = m_r.append(self.d__measurement(self.trig_r,self.echo_r))
+                m_m.append(self.d_measurement(self.trig_m, self.echo_m,))
+
+                m_r.append(self.d_measurement(self.trig_r, self.echo_r))
 
             #in case you only want left and right
             elif l and not m and r:
@@ -60,20 +61,21 @@ class Sense:
 
             count += 1
 
+
+        output[0] = m_l
+        output[1] = m_m
+        output[2] = m_r
+
         #takes the median of the six measurements
 
-        for i in output:
+        for i in range(0, len(output)):
             output[i].sort()
             output[i] = output[i][3]
 
         return output
 
 
-
-
-
-
-    def d__measurement(self,t,e):
+    def d_measurement(self,t,e):
         '''
         The measurement function itself
 
@@ -90,11 +92,12 @@ class Sense:
 
         #measures the time between sending the signal and receiving the signal on echo
 
-        while not GPIO.input(e):
+        while GPIO.input(e) == False:
             start = time.time()
 
-        while not GPIO.input(e):
+        while GPIO.input(e) == True:
             end = time.time()
+
 
         sig_time = end - start
 

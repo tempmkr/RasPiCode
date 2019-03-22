@@ -21,7 +21,7 @@ class Move:
         self.dir_l1 = dir_l1
         self.dir_l2 = dir_l2
         self.dir_r1 = dir_r1
-        self.dir_l1 = dir_r2
+        self.dir_r2 = dir_r2
 
         self.f = f
 
@@ -34,8 +34,8 @@ class Move:
         GPIO.setup(dir_r1, GPIO.OUT)
         GPIO.setup(dir_r2, GPIO.OUT)
 
-        p_r = GPIO.PWM(pwm_l, f)
-        p_l = GPIO.PWM(pwm_r, f)
+        self.p_r = GPIO.PWM(self.pwm_l, self.f)
+        self.p_l = GPIO.PWM(self.pwm_r, self.f)
 
 
     def straight(self,speed, forward = True):
@@ -47,14 +47,14 @@ class Move:
 
         '''
 
+        GPIO.output(self.dir_r1, not forward)
+        GPIO.output(self.dir_r2, forward)
+
         GPIO.output(self.dir_l1, not forward)
         GPIO.output(self.dir_l2, forward)
 
-        GPIO.output(dir_b1, not forward)
-        GPIO.output(dir_b2, forward)
-
-        self.pwm_l.start(self.speed)
-        self.pwm_r.start(self.speed)
+        self.p_l.start(speed)
+        self.p_r.start(speed)
 
     def rotate(self, speed, right = True):
         '''
@@ -69,8 +69,8 @@ class Move:
         GPIO.output(self.dir_b1, not right)
         GPIO.output(self.dir_b2, right)
 
-        self.pwm_l.start(self.speed)
-        self.pwm_r.start(self.speed)
+        self.p_l.start(self.speed)
+        self.p_r.start(self.speed)
 
 
     def turn(self, speed_diff):
