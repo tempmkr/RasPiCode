@@ -38,7 +38,7 @@ class Move:
         self.p_l = GPIO.PWM(self.pwm_r, self.f)
 
 
-    def straight(self,speed, forward = True):
+    def straight(self,speed = 50, forward = True):
 
         '''
 
@@ -47,16 +47,23 @@ class Move:
 
         '''
 
-        GPIO.output(self.dir_r1, not forward)
-        GPIO.output(self.dir_r2, forward)
+        GPIO.output(self.dir_r1, forward)
+        GPIO.output(self.dir_r2, not forward)
 
-        GPIO.output(self.dir_l1, not forward)
-        GPIO.output(self.dir_l2, forward)
+        GPIO.output(self.dir_l1, forward)
+        GPIO.output(self.dir_l2, not forward)
 
-        self.p_l.start(speed)
-        self.p_r.start(speed)
 
-    def rotate(self, speed, right = True):
+
+        if forward:
+            self.p_l.start(speed+10)
+            self.p_r.start(speed-10)
+        else:
+            self.p_l.start(speed)
+            self.p_r.start(speed)
+
+
+    def rotate(self, speed = 60, right = True):
         '''
 
         :param speed: Speed in percent
@@ -69,20 +76,33 @@ class Move:
         GPIO.output(self.dir_b1, not right)
         GPIO.output(self.dir_b2, right)
 
-        self.p_l.start(self.speed)
-        self.p_r.start(self.speed)
+        self.p_l.start(speed)
+        self.p_r.start(speed)
 
 
-    def turn(self, speed_diff):
+    def turn(self, speed_diff = 60, right = True):
 
         '''
 
         :param speed__diff: Speed difference between left and right
+        Speeddiff: The idea here is that when bot is on trajectory turn can be implemented upon existing movement without stoping one of the engines.
 
         '''
 
-        pass
+        GPIO.output(self.dir_r1, not right)
+        GPIO.output(self.dir_r2, right)
 
+        GPIO.output(self.dir_l1, right)
+        GPIO.output(self.dir_l2, not right)
+
+        if right:
+
+            self.p_l.start(0)
+            self.p_r.start(speed_diff)
+
+        elif not right:
+            self.p_l.start(speed_diff)
+            self.p_r.start(0)
 
 
     def stop(self):
